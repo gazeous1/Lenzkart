@@ -10,40 +10,40 @@ import { ReactiveFormsModule } from '@angular/forms';
 })
 export class LoginRegisterComponent {
 
-  firstname: string= "";
-  lastname: string = "";
-  email: string= "";
-  password: string= "";
+  // firstname: string= "";
+  // lastname: string = "";
+  // email: string= "";
+  // password: string= "";
 
-  constructor(private http: HttpClient)
-  {
+  // constructor(private http: HttpClient)
+  // {
 
-  }
+  // }
 
-  ngOnit(): void{
+  // ngOnit(): void{
 
-  }
+  // }
 
-  register()
-  {
-    let bodyData = 
-    {
-      "firstname" : this.firstname,
-      "lastname":this.lastname,
-      "email":this.email,
-      "password":this.password
+  // register()
+  // {
+  //   let bodyData = 
+  //   {
+  //     "firstname" : this.firstname,
+  //     "lastname":this.lastname,
+  //     "email":this.email,
+  //     "password":this.password
 
-    };
-    this.http.post("http://localhost:3005/user/create",bodyData).subscribe((resultData: any) =>
-    {
-      console.log(resultData);
-      alert("Student Registered Successfully");
-    });
-  }
+  //   };
+  //   this.http.post("http://localhost:3005/user/create",bodyData).subscribe((resultData: any) =>
+  //   {
+  //     console.log(resultData);
+  //     alert("Student Registered Successfully");
+  //   });
+  // }
 
-  save()
-  {
-    this.register();
-  }
+  // save()
+  // {
+  //   this.register();
+  // }
 
 }

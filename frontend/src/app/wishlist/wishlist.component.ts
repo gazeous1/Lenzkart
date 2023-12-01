@@ -8,4 +8,9 @@ import { Router } from '@angular/router';
 })
 export class WishlistComponent {
 
+  constructor(private router: Router) {}
+
+  addToCart(cartUrl: string): void {
+    this.router.navigateByUrl(cartUrl);
+  }
 }

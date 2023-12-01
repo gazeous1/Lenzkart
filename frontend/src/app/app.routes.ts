@@ -7,11 +7,10 @@ import { ContactComponent } from './contact/contact.component';
 import { IndexComponent } from './index/index.component';
 import { LoginRegisterComponent } from './login-register/login-register.component';
 import { MyAccountComponent } from './my-account/my-account.component';
-import { ShopComponent } from './shop/shop.component';
 import { ShopGridComponent } from './shop-grid/shop-grid.component';
 import { ShopLenzesComponent } from './shop-lenzes/shop-lenzes.component';
 import { ShopLenzsingleComponent } from './shop-lenzsingle/shop-lenzsingle.component';
-import { ShopListComponent } from './shop-list/shop-list.component';
+
 import { SingleProductComponent } from './single-product/single-product.component';
 import { WishlistComponent } from './wishlist/wishlist.component';
 
@@ -32,7 +31,6 @@ export const routes: Routes = [
     {path: 'shopgrid', component:ShopGridComponent},
     {path: 'shoplenzes', component:ShopLenzesComponent},
     {path: 'shoplenzsingle', component:ShopLenzsingleComponent},
-    {path: 'shoplist', component:ShopListComponent},
     {path: 'singleproduct', component:SingleProductComponent},
     {path: 'wishlist', component:WishlistComponent}
     
