@@ -3,33 +3,7 @@ var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
-// const userSchema = new Schema({
-//   firstname: {
-//     type: String,
-//     required: true,
-//   },
-//   lastname: {
-//     type: String,
-//     required: true,
-//   },
-//   email: {
-//     type: String,
-//     unique: true,
-//     lowercase: true,  // Missing colon here
-//     trim: true,
-//     validate: {
-//       validator: value => validator.isEmail(value),
-//       message: 'Invalid Email address',
-//     },
-//     match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,  // Fixed regex
-//   },
-//   password: {
-//     type: String,
-//     required: [true, 'Please add a Password'],
-//     minlength: 6,
-//     select: false,
-//   },
-// });
+
 
 var userSchema = new Schema({
     firstname: {
