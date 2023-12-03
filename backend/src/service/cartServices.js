@@ -1,24 +1,21 @@
-var cartModel = require('../models/cartModel'); // Import the new cart model
-var key = '123456789trytryrtyr';
-var encryptor = require('simple-encryptor')(key);
+const cartModel = require('../models/cartModel');
+const encryptor = require('simple-encryptor')('123456789trytryrtyr');
 
 // Create a cart in the database
-module.exports.createCartDBService = (cartDetails) => {
-    return new Promise((resolve, reject) => {
-        var cartModelData = new cartModel();
-        cartModelData.userId = cartDetails.userId; // Assuming you have a userId in the cart model
-        cartModelData.products = cartDetails.products; // Assuming you have a products field in the cart model
+module.exports.createCartDBService = async (cartDetails) => {
+    try {
+        const cartModelData = new cartModel({
+            userId: cartDetails.userId,
+            products: cartDetails.products,
+        });
 
-        cartModelData.save()
-            .then(result => {
-                resolve(true);
-            })
-            .catch(error => {
-                console.error(error);
-                reject(false);
-            });
-    });
-}
+        await cartModelData.save();
+        return { status: true, message: "Cart created successfully" };
+    } catch (error) {
+        console.error(error);
+        throw new Error("Error in creating cart: " + error.message);
+    }
+};
 
 // Retrieve a user's cart from the database
 module.exports.getCartDBService = async (userId) => {
@@ -46,12 +43,12 @@ module.exports.updateCartDBService = async (userId, updatedCartDetails) => {
             throw new Error("Cart not found");
         }
 
-        // Update the cart details, encrypting if needed
+        // Update the cart details
         cart.products = updatedCartDetails.products;
 
         await cart.save();
 
-        return { status: true, msg: "Cart updated successfully" };
+        return { status: true, message: "Cart updated successfully" };
     } catch (error) {
         throw new Error("Error in updating cart: " + error.message);
     }

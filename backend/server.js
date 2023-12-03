@@ -4,7 +4,7 @@ const app = express();
 
 mongoose.set('strictQuery',false);
 
-var routes = require('./route/routes');
+var routes = require('./route/cartroutes','./route/checkoutroutes','./route/contactroute','./route/userroutes');
 
 var cors = require('cors');
 
