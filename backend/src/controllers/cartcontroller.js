@@ -1,23 +1,85 @@
-const cartmodels = require('../models/cartModel');
+const cartService = require('../service/cartServices');
 
-var addtoCartFn = async (req, res) => {
+const createCartControllerFn = async (req, res) => {
     try {
-        const newCartItem = new cartmodels({
-            product_id: req.body.product_id,
-            productprice: req.body.productprice,
-            quantity: req.body.quantity,
-            userId: req.userId,
-        });
+        console.log("Received cart request body:", req.body);
+        const status = await cartService.createCartDBService(req.body);
 
-        await newCartItem.save();
-
-        // If you want to send a response back to the client
-        res.json({ message: "Product added to cart successfully", newCartItem });
+        if (status) {
+            res.send({ "status": true, "message": "Cart created successfully" });
+        } else {
+            res.send({ "status": false, "message": "Error creating cart" });
+        }
     } catch (error) {
-        console.error(error);
-        // If an error occurs, send an error response to the client
-        res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error in createCartControllerFn:", error);
+        res.send({ "status": false, "message": "Internal Server Error" });
     }
 };
 
-module.exports = { addtoCartFn };
+const getCartControllerFn = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const result = await cartService.getCartDBService(userId);
+
+        res.send(result);
+    } catch (error) {
+        console.error("Error in getCartControllerFn:", error);
+        res.send({ "status": false, "message": "Internal Server Error" });
+    }
+};
+
+const updateCartControllerFn = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const updatedCartDetails = req.body;
+        const result = await cartService.updateCartDBService(userId, updatedCartDetails);
+
+        if (result.status) {
+            res.send({ "status": true, "message": "Cart updated successfully" });
+        } else {
+            res.send({ "status": false, "message": "Error updating cart" });
+        }
+    } catch (error) {
+        console.error("Error in updateCartControllerFn:", error);
+        res.send({ "status": false, "message": "Internal Server Error" });
+    }
+};
+
+
+
+const deleteCartControllerFn = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const status = await cartService.deleteCartDBService(userId);
+
+        if (status) {
+            res.send({ "status": true, "message": "Cart deleted successfully" });
+        } else {
+            res.send({ "status": false, "message": "Error deleting cart" });
+        }
+    } catch (error) {
+        console.error("Error in deleteCartControllerFn:", error);
+        res.send({ "status": false, "message": "Internal Server Error" });
+    }
+};
+
+
+
+
+const getAllItemsControllerFn = async (req, res) => {
+    try {
+        const status = await cartService.getAllItemsDBService();
+
+        if (status) {
+            res.send({ "status": true, "items": status.items });
+        } else {
+            res.send({ "status": false, "message": "Error retrieving all items" });
+        }
+    } catch (error) {
+        console.error("Error in getAllItemsControllerFn:", error);
+        res.send({ "status": false, "message": "Internal Server Error" });
+    }
+};
+
+
+module.exports = { createCartControllerFn, getCartControllerFn, updateCartControllerFn , deleteCartControllerFn,  getAllItemsControllerFn,};

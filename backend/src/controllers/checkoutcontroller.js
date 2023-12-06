@@ -1,27 +1,35 @@
-// cartController.js
 
-const cartmodels = require('../models/cartModel');
-const checkoutService = require('../services/checkoutService');
+const checkoutService = require('../service/checkoutServices');
 
-var addtoCartFn = async (req, res) => {
+const createCheckoutControllerFn = async (req, res) => {
     try {
-        const newCartItem = new cartmodels({
-            product_id: req.body.product_id,
-            productprice: req.body.productprice,
-            quantity: req.body.quantity,
-            userId: req.userId,
-        });
-
-        await newCartItem.save();
-
-        // Call checkout functionality after adding to cart
-        const checkoutResult = await checkoutService.checkoutDBService(req.userId);
-
-        res.json({ message: "Product added to cart and checkout successful", checkoutResult });
+        const checkoutDetails = req.body;
+        const status = await checkoutService.createCheckoutDBService(checkoutDetails);
+        if (status) {
+            res.send({ status: true, message: "Checkout completed successfully" });
+        } else {
+            res.send({ status: false, message: "Error completing checkout" });
+        }
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error in createCheckoutControllerFn:", error);
+        res.send({ status: false, message: "Internal Server Error" });
     }
 };
 
-module.exports = { addtoCartFn };
+const getAllCheckoutsControllerFn = async (req, res) => {
+    try {
+        const result = await checkoutService.getAllCheckoutsDBService();
+
+        if (result.status) {
+            res.send({ status: true, checkouts: result.checkouts });
+        } else {
+            res.send({ status: false, message: "Error retrieving checkouts" });
+        }
+    } catch (error) {
+        console.error("Error in getAllCheckoutsControllerFn:", error);
+        res.send({ status: false, message: "Internal Server Error" });
+    }
+};
+
+
+module.exports = { createCheckoutControllerFn, getAllCheckoutsControllerFn };

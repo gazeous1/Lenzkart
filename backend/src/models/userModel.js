@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-//const validator = require('validator');
 
 var Schema = mongoose.Schema;
 
@@ -27,8 +26,6 @@ var userSchema = new Schema({
   
 
 
-// Create a model
 const user = mongoose.model('user', userSchema);
 
-// Export the model
 module.exports = user;

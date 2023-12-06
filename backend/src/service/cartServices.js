@@ -1,12 +1,21 @@
-const cartModel = require('../models/cartModel');
+const Cart = require('../models/cartModel');
 const encryptor = require('simple-encryptor')('123456789trytryrtyr');
 
-// Create a cart in the database
 module.exports.createCartDBService = async (cartDetails) => {
     try {
-        const cartModelData = new cartModel({
-            userId: cartDetails.userId,
-            products: cartDetails.products,
+        console.log("Received cart details in createCartDBService:", cartDetails);
+
+       
+        if (!cartDetails.product_id || !cartDetails.user_id || !cartDetails.productname || !cartDetails.productprice || !cartDetails.quantity) {
+            throw new Error("Missing required fields in the request");
+        }
+
+        const cartModelData = new Cart({
+            product_id: cartDetails.product_id,
+            user_id: cartDetails.user_id,
+            productname: cartDetails.productname,
+            productprice: cartDetails.productprice,
+            quantity: cartDetails.quantity,
         });
 
         await cartModelData.save();
@@ -17,39 +26,81 @@ module.exports.createCartDBService = async (cartDetails) => {
     }
 };
 
-// Retrieve a user's cart from the database
+
 module.exports.getCartDBService = async (userId) => {
     try {
-        const cart = await cartModel.findOne({ userId }).exec();
+        console.log("Received userId in getCartDBService:", userId);
+
+        const cart = await Cart.findOne({ user_id: userId }).exec();
 
         if (!cart) {
+            console.log("Cart not found for userId:", userId);
             throw new Error("Cart not found");
         }
 
-        // Decrypt any encrypted fields in the cart model if needed
 
         return { status: true, cart };
     } catch (error) {
+        console.error("Error in getCartDBService:", error.message);
         throw new Error("Error in retrieving cart: " + error.message);
     }
 };
 
-// Update a user's cart in the database
+
 module.exports.updateCartDBService = async (userId, updatedCartDetails) => {
     try {
-        const cart = await cartModel.findOne({ userId }).exec();
+        console.log("Received userId in updateCartDBService:", userId);
+
+        const cart = await Cart.findOne({ user_id: userId }).exec();
 
         if (!cart) {
             throw new Error("Cart not found");
         }
 
-        // Update the cart details
-        cart.products = updatedCartDetails.products;
+        cart.productname = updatedCartDetails.productname;
+        cart.productprice = updatedCartDetails.productprice;
+        cart.quantity = updatedCartDetails.quantity;
 
         await cart.save();
+
+        console.log("Current Cart State:", cart);
+        console.log("Updated Cart State:", updatedCartDetails);
 
         return { status: true, message: "Cart updated successfully" };
     } catch (error) {
         throw new Error("Error in updating cart: " + error.message);
     }
 };
+
+
+
+
+module.exports.deleteCartDBService = async (userId) => {
+    try {
+        console.log("Received userId in deleteCartDBService:", userId);
+
+        const cart = await Cart.findOneAndDelete({ user_id: userId }).exec();
+
+        if (!cart) {
+            throw new Error("Cart not found");
+        }
+
+        console.log("Deleted Cart State:", cart);
+
+        return { status: true, message: "Cart deleted successfully" };
+    } catch (error) {
+        throw new Error("Error in deleting cart: " + error.message);
+    }
+};
+
+
+
+module.exports.getAllItemsDBService = async () => {
+    try {
+        const items = await Cart.find().exec();
+        return { status: true, items };
+    } catch (error) {
+        throw new Error("Error in retrieving all items: " + error.message);
+    }
+};
+

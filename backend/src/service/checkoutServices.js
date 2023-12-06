@@ -1,43 +1,41 @@
-// checkoutService.js
 
-var cartModel = require('../models/cartModel');
-var orderModel = require('../models/orderModel');
-var key = '123456789trytryrtyr';
-var encryptor = require('simple-encryptor')(key);
+const Checkout = require('../models/checkoutModel');
 
-// Helper function to calculate the total amount
-function calculateTotalAmount(products) {
-    let totalAmount = 0;
-    products.forEach(product => {
-        totalAmount += product.productprice * product.quantity;
-    });
-    return totalAmount;
-}
 
-// Checkout process
-module.exports.checkoutDBService = async (userId) => {
+module.exports.createCheckoutDBService = async (checkoutDetails) => {
     try {
-        // Retrieve the user's cart
-        const cart = await cartModel.findOne({ userId }).exec();
+        console.log("Received checkout details in createCheckoutDBService:", checkoutDetails);
 
-        if (!cart) {
-            throw new Error("Cart not found");
+    
+        if (!checkoutDetails.user_id || !checkoutDetails.items || checkoutDetails.items.length === 0) {
+            throw new Error("Missing required fields in the request");
         }
 
-        // Create a new order using cart details
-        var orderData = new orderModel();
-        orderData.user_id = cart.user_id;
-        orderData.products = cart.products;
-        orderData.totalAmount = calculateTotalAmount(cart.products);
+        const totalAmount = checkoutDetails.items.reduce((sum, item) => {
+            return sum + item.productprice * item.quantity;
+        }, 0);
 
-        // Save the order
-        await orderData.save();
+        checkoutDetails.totalAmount = totalAmount;
 
-        // Clear the user's cart after checkout
-        await cartModel.deleteOne({ userId }).exec();
+        const checkoutModelData = new Checkout(checkoutDetails);
+        const savedCheckout = await checkoutModelData.save();
 
-        return { status: true, msg: "Checkout successful", order: orderData };
+        console.log("Checkout saved successfully:", savedCheckout);
+
+        return { status: true, message: "Checkout completed successfully" };
+
     } catch (error) {
-        throw new Error("Error in checkout process: " + error.message);
+        console.error("Error in completing checkout:", error.message);
+        throw new Error("Error in completing checkout: " + error.message);
+    }
+};
+
+module.exports.getAllCheckoutsDBService = async () => {
+    try {
+        const allCheckouts = await Checkout.find().exec();
+        return { status: true, checkouts: allCheckouts };
+    } catch (error) {
+        console.error("Error in retrieving all checkouts:", error.message);
+        throw new Error("Error in retrieving all checkouts: " + error.message);
     }
 };
